@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>업무 우선순위 룰렛</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+  --line:#e5e7eb; --primary:#4f46e5; --primary2:#7c3aed;
+  --success:#10b981; --warn:#f59e0b; --danger:#ef4444;
+  --shadow:0 10px 30px rgba(31,41,55,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f8fafc 0%,#eef2ff 100%);color:var(--text)}
+.container{max-width:1180px;margin:0 auto;padding:28px 18px 60px}
+.hero{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:20px}
+.hero h1{margin:0;font-size:clamp(28px,4vw,44px);letter-spacing:-.04em}
+.hero p{margin:8px 0 0;color:var(--muted);max-width:720px;line-height:1.6}
+.badge{white-space:nowrap;background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe;padding:8px 12px;border-radius:999px;font-weight:700;font-size:13px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+.panel{background:rgba(255,255,255,.92);border:1px solid rgba(229,231,235,.9);border-radius:22px;box-shadow:var(--shadow);padding:20px;backdrop-filter:blur(10px)}
+.panel h2{margin:0 0 6px;font-size:20px}.sub{margin:0 0 16px;color:var(--muted);font-size:14px}
+.task-list{display:grid;gap:12px}.task-card{border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff;transition:.2s ease}.task-card:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(31,41,55,.06)}
+.task-top{display:flex;gap:10px;align-items:center}.task-top input{flex:1;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:15px;outline:none}.task-top input:focus{border-color:#a5b4fc;box-shadow:0 0 0 3px #eef2ff}.remove{border:0;background:#f3f4f6;color:#6b7280;width:38px;height:38px;border-radius:12px;cursor:pointer;font-size:18px}.remove:hover{background:#fee2e2;color:#b91c1c}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}.metric{background:#f9fafb;border-radius:14px;padding:10px}.metric-head{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-bottom:6px}.metric strong{color:var(--text)}
+input[type="range"]{width:100%;accent-color:var(--primary);cursor:pointer}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;transition:.18s ease;font-size:14px}.btn:active{transform:scale(.98)}.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 8px 16px rgba(79,70,229,.22)}.btn-secondary{background:#111827;color:#fff}.btn-light{background:#eef2ff;color:#4338ca}.btn:disabled{opacity:.5;cursor:not-allowed}
+.formula{margin-top:14px;padding:12px 14px;border-radius:14px;background:#f8fafc;border:1px dashed #cbd5e1;color:#475569;font-size:13px;line-height:1.55}
+.results{display:grid;gap:10px}.empty{padding:34px 16px;text-align:center;color:var(--muted);border:1px dashed #cbd5e1;border-radius:16px;background:#fafafa}.result-row{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding:13px;border-radius:16px;border:1px solid var(--line);background:#fff;position:relative;overflow:hidden}.result-row.top{border-color:#fbbf24;background:linear-gradient(90deg,#fffbeb 0%,#fff 60%)}.rank{font-weight:900;font-size:18px;text-align:center}.name{font-weight:800;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-wrap{height:10px;background:#eef2f7;border-radius:999px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:999px;transition:width .7s cubic-bezier(.2,.8,.2,1)}.score{font-weight:900;font-size:18px;min-width:64px;text-align:right}.score small{font-size:11px;color:var(--muted);font-weight:700}.crown{position:absolute;right:10px;top:6px;font-size:18px}
+.roulette-wrap{margin-top:20px;padding:18px;border-radius:18px;background:linear-gradient(135deg,#111827,#312e81);color:white;text-align:center;overflow:hidden}.roulette-title{font-size:14px;opacity:.8}.roulette-display{margin:14px auto 8px;min-height:74px;display:flex;align-items:center;justify-content:center;font-size:clamp(22px,5vw,36px);font-weight:900;letter-spacing:-.03em;padding:12px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);transition:.15s}.roulette-display.spinning{animation:pulse .28s infinite alternate}@keyframes pulse{from{transform:scale(.98);opacity:.75}to{transform:scale(1.02);opacity:1}}
+.notice{margin-top:10px;font-size:12px;line-height:1.5;color:#c7d2fe}
+.footer-note{margin-top:16px;padding:13px 14px;border-radius:14px;background:#ecfdf5;color:#065f46;font-size:13px;line-height:1.5}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.badge{align-self:flex-start}}
+@media(max-width:620px){.container{padding:18px 12px 40px}.panel{padding:15px;border-radius:18px}.metrics{grid-template-columns:1fr}.result-row{grid-template-columns:44px 1fr}.score{grid-column:2;text-align:left;margin-top:-4px}.controls .btn{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="hero">
+    <div>
+      <h1>업무 우선순위 룰렛 🎯</h1>
+      <p>최대 6개 업무를 중요도·긴급도·영향도로 비교하고, 점수 기반 우선순위를 한눈에 확인하세요. 룰렛은 가볍게 오늘 먼저 볼 업무를 정하는 재미 요소입니다.</p>
+    </div>
+    <div class="badge">피곤하지 않게, 가볍게 정리</div>
+  </header>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>업무 후보 입력</h2>
+      <p class="sub">슬라이더를 움직이면 값이 즉시 표시됩니다.</p>
+      <div id="taskList" class="task-list"></div>
+      <div class="controls">
+        <button class="btn btn-light" id="addTaskBtn">+ 업무 추가</button>
+        <button class="btn btn-primary" id="calcBtn">우선순위 계산</button>
+        <button class="btn btn-secondary" id="rouletteBtn">오늘 먼저 볼 업무 뽑기</button>
+      </div>
+      <div class="formula">점수 = 중요도×40 + 긴급도×35 + 영향도×25<br>최대 원점수 500점을 100점 기준으로 환산합니다.</div>
+    </section>
+
+    <section class="panel">
+      <h2>우선순위 결과</h2>
+      <p class="sub">점수가 높을수록 먼저 검토할 필요가 큰 업무입니다.</p>
+      <div id="results" class="results"><div class="empty">아직 계산 전입니다. 업무 값을 조정한 뒤 <b>우선순위 계산</b>을 눌러주세요.</div></div>
+
+      <div class="roulette-wrap">
+        <div class="roulette-title">오늘 먼저 볼 업무</div>
+        <div id="rouletteDisplay" class="roulette-display">🎡 버튼을 눌러보세요</div>
+        <div class="notice">※ 룰렛 결과는 재미 요소이며 실제 업무 우선순위 판단 기준이 아닙니다. 실제 순위는 위의 점수 결과를 기준으로 확인하세요.</div>
+      </div>
+      <div class="footer-note">💡 피로할 때는 1위 업무를 바로 끝내려 하기보다, “10분만 착수”할 수 있는 가장 작은 단위부터 시작해보세요.</div>
+    </section>
+  </div>
+</div>
+<script>
+const defaults=[
+  '민원 안내 개선','공원 시설 점검','직원 디지털 교육','행사 준비','주차 민원 개선'
+];
+const taskList=document.getElementById('taskList');
+const results=document.getElementById('results');
+const addTaskBtn=document.getElementById('addTaskBtn');
+const calcBtn=document.getElementById('calcBtn');
+const rouletteBtn=document.getElementById('rouletteBtn');
+const rouletteDisplay=document.getElementById('rouletteDisplay');
+let spinning=false;
+
+function taskCard(name=''){
+  const card=document.createElement('div');
+  card.className='task-card';
+  card.innerHTML=`
+    <div class="task-top">
+      <input class="task-name" type="text" maxlength="40" placeholder="업무명 입력" value="${name.replace(/"/g,'&quot;')}">
+      <button class="remove" title="삭제">×</button>
+    </div>
+    <div class="metrics">
+      ${metric('중요도','importance',3)}
+      ${metric('긴급도','urgency',3)}
+      ${metric('영향도','impact',3)}
+    </div>`;
+  card.querySelectorAll('input[type="range"]').forEach(r=>{
+    r.addEventListener('input',e=>e.target.closest('.metric').querySelector('strong').textContent=e.target.value);
+  });
+  card.querySelector('.remove').addEventListener('click',()=>{card.remove();syncAddButton();});
+  return card;
+}
+function metric(label,cls,val){
+  return `<div class="metric"><div class="metric-head"><span>${label}</span><strong>${val}</strong></div><input class="${cls}" type="range" min="1" max="5" value="${val}" step="1"></div>`;
+}
+function addTask(name=''){
+  if(taskList.children.length>=6) return;
+  taskList.appendChild(taskCard(name));
+  syncAddButton();
+}
+function syncAddButton(){addTaskBtn.disabled=taskList.children.length>=6;}
+function getTasks(){
+  return [...taskList.children].map((card,i)=>{
+    const name=card.querySelector('.task-name').value.trim() || `업무 ${i+1}`;
+    const importance=+card.querySelector('.importance').value;
+    const urgency=+card.querySelector('.urgency').value;
+    const impact=+card.querySelector('.impact').value;
+    const raw=importance*40+urgency*35+impact*25;
+    const score=raw/5;
+    return {name,importance,urgency,impact,score};
+  });
+}
+function calculate(){
+  const ranked=getTasks().sort((a,b)=>b.score-a.score);
+  if(!ranked.length){results.innerHTML='<div class="empty">업무를 1개 이상 추가해주세요.</div>';return;}
+  results.innerHTML=ranked.map((t,i)=>`
+    <div class="result-row ${i===0?'top':''}">
+      <div class="rank">${i+1}위</div>
+      <div>
+        <div class="name">${escapeHtml(t.name)}</div>
+        <div class="bar-wrap"><div class="bar" data-width="${t.score}%"></div></div>
+      </div>
+      <div class="score">${t.score.toFixed(1)}<small> /100</small></div>
+      ${i===0?'<div class="crown">👑</div>':''}
+    </div>`).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('.bar').forEach(b=>b.style.width=b.dataset.width));
+}
+function escapeHtml(s){return s.replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+function roulette(){
+  if(spinning) return;
+  const tasks=getTasks();
+  if(!tasks.length){rouletteDisplay.textContent='업무를 먼저 추가해주세요';return;}
+  spinning=true; rouletteBtn.disabled=true; rouletteDisplay.classList.add('spinning');
+  let ticks=0; const total=28+Math.floor(Math.random()*12);
+  const interval=setInterval(()=>{
+    const pick=tasks[Math.floor(Math.random()*tasks.length)];
+    rouletteDisplay.textContent=`🔄 ${pick.name}`;
+    ticks++;
+    if(ticks>=total){
+      clearInterval(interval);
+      const finalPick=tasks[Math.floor(Math.random()*tasks.length)];
+      rouletteDisplay.textContent=`🎯 ${finalPick.name}`;
+      rouletteDisplay.classList.remove('spinning');
+      spinning=false; rouletteBtn.disabled=false;
+    }
+  },90 + ticks*3);
+}
+
+defaults.forEach(addTask);
+addTaskBtn.addEventListener('click',()=>addTask(''));
+calcBtn.addEventListener('click',calculate);
+rouletteBtn.addEventListener('click',roulette);
+calculate();
+</script>
+</body>
+</html>
