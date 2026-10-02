@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>민원처리 현황 시각화 개선</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#1f2937;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif}.wrap{max-width:1180px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}.top h1{margin:0;font-size:27px;color:#17324d}.top p{margin:5px 0 0;color:#64748b;font-size:13px}.badge{padding:7px 10px;border-radius:999px;background:#eaf2ff;color:#245ea9;font-size:12px;font-weight:800}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}.mini{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:15px}.mini span{display:block;color:#64748b;font-size:12px}.mini b{display:block;margin-top:5px;font-size:18px;color:#17324d}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;min-width:0}.s5{grid-column:span 5}.s7{grid-column:span 7}.s12{grid-column:span 12}.card h2{margin:0 0 10px;font-size:16px;color:#17324d}.list{display:grid;gap:8px}.row{padding:10px 11px;border-radius:10px;background:#f8fafc;font-size:14px}.row small{display:block;color:#64748b;margin-top:3px}.tasks{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.task{border:1px solid #e6ebf1;border-radius:11px;padding:11px;background:#fbfcfe;cursor:pointer;transition:.18s}.task:hover,.task.active{border-color:#6b8fd6;background:#eef4ff;transform:translateY(-1px)}.task b{display:block;font-size:13px;color:#17324d}.task span{display:block;margin-top:5px;color:#64748b;font-size:12px}.flow{display:flex;gap:6px;flex-wrap:wrap}.step{flex:1 1 120px;padding:9px;border-radius:9px;background:#eef4ff;color:#245ea9;text-align:center;font-size:12px;font-weight:800}.decision{background:linear-gradient(135deg,#17324d,#245ea9);color:white}.decision h2{color:white}.checks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.check{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(255,255,255,.08);font-size:13px}.check input{width:18px;height:18px}.detail{margin-top:10px;padding:10px;border-radius:10px;background:#f8fafc;color:#475569;font-size:13px;min-height:42px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar button{border:1px solid #d7dee8;background:#fff;color:#334155;border-radius:10px;padding:8px 11px;font-weight:700;cursor:pointer}.toolbar button.active{background:#17324d;color:#fff;border-color:#17324d}.hide-detail .extra{display:none}.note{font-size:12px;color:#64748b;margin-top:8px}@media(max-width:850px){.summary{grid-template-columns:1fr}.s5,.s7{grid-column:span 12}.tasks{grid-template-columns:repeat(2,1fr)}.checks{grid-template-columns:1fr 1fr}}@media(max-width:560px){.wrap{padding:14px}.top{align-items:flex-start;flex-direction:column}.tasks,.checks{grid-template-columns:1fr}.top h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="top">
+    <div><h1>민원처리 현황 시각화 개선</h1><p>내부 검토용 · 1페이지 요약</p></div>
+    <div class="badge">기획 검토안</div>
+  </div>
+
+  <div class="toolbar" aria-label="보기 설정">
+    <button type="button" class="active" data-mode="summary">요약 보기</button>
+    <button type="button" data-mode="detail">상세 보기</button>
+  </div>
+
+  <section class="summary">
+    <div class="mini"><span>현재 핵심 문제</span><b>수작업 · 기준 불일치 · 식별 어려움</b></div>
+    <div class="mini"><span>개선 방향</span><b>표준화 · 자동화 · 시각화</b></div>
+    <div class="mini"><span>추가 확인</span><b>일정 · 예산 · 담당 · KPI</b></div>
+  </section>
+
+  <div class="grid">
+    <section class="card s5">
+      <h2>현황</h2>
+      <div class="list">
+        <div class="row">월말 수작업 취합</div>
+        <div class="row">부서별 집계 기준 차이</div>
+        <div class="row">긴급·장기 미처리 건 식별 어려움</div>
+      </div>
+    </section>
+
+    <section class="card s7">
+      <h2>추진 목표</h2>
+      <div class="list">
+        <div class="row">입력·취합 방식 표준화</div>
+        <div class="row">반복 집계 업무 간소화</div>
+        <div class="row">주요 현황 시각화 및 조건별 조회</div>
+      </div>
+      <div class="note extra">※ 정량 목표는 추가 확인 필요</div>
+    </section>
+
+    <section class="card s12">
+      <h2>주요 추진과제 <small style="font-weight:400;color:#64748b">· 클릭하면 설명 표시</small></h2>
+      <div class="tasks">
+        <button class="task active" type="button" data-text="부서별로 동일한 기준의 입력 양식을 적용합니다."><b>공통 입력 양식</b><span>기준 통일</span></button>
+        <button class="task" type="button" data-text="입력 자료를 바탕으로 기본 관리지표를 자동 계산합니다."><b>KPI 자동 계산</b><span>반복 집계 축소</span></button>
+        <button class="task" type="button" data-text="부서·상태·긴급도 기준으로 필요한 현황을 조회합니다."><b>조건별 필터</b><span>빠른 조회</span></button>
+        <button class="task" type="button" data-text="월별 민원 처리 변화를 차트로 확인합니다."><b>월별 추이</b><span>변화 파악</span></button>
+        <button class="task" type="button" data-text="실제 개인정보는 대시보드에 표시하지 않습니다."><b>개인정보 보호</b><span>미표시 원칙</span></button>
+      </div>
+      <div class="detail" id="taskDetail" aria-live="polite">부서별로 동일한 기준의 입력 양식을 적용합니다.</div>
+      <div class="note extra">※ KPI 종류·산식 등 세부 기능은 추가 확인 필요</div>
+    </section>
+
+    <section class="card s7 extra">
+      <h2>실행 절차</h2>
+      <div class="flow"><div class="step">현황 정리</div><div class="step">기준 정의</div><div class="step">화면 설계</div><div class="step">구현 검토</div><div class="step">검증·적용</div></div>
+    </section>
+
+    <section class="card s5 extra">
+      <h2>위험요인</h2>
+      <div class="list"><div class="row">개인정보 노출 <small>→ 실제 개인정보 미표시</small></div><div class="row">시스템 변경 <small>→ 범위·영향 별도 검토</small></div><div class="row">운영 주체 미정 <small>→ 담당·책임자 확정 필요</small></div></div>
+    </section>
+
+    <section class="card s12 decision">
+      <h2>의사결정이 필요한 사항</h2>
+      <div class="checks">
+        <label class="check"><input type="checkbox">추진 범위</label>
+        <label class="check"><input type="checkbox">집계기준 표준화</label>
+        <label class="check"><input type="checkbox">대시보드 구현방식</label>
+        <label class="check"><input type="checkbox">일정 및 예산</label>
+        <label class="check"><input type="checkbox">담당 부서·운영 책임자</label>
+        <label class="check"><input type="checkbox">KPI·성과 측정기준</label>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+const app=document.getElementById('app');
+const modeButtons=[...document.querySelectorAll('[data-mode]')];
+modeButtons.forEach(btn=>btn.addEventListener('click',()=>{
+  modeButtons.forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  app.classList.toggle('hide-detail',btn.dataset.mode==='summary');
+}));
+app.classList.add('hide-detail');
+const tasks=[...document.querySelectorAll('.task')];
+const detail=document.getElementById('taskDetail');
+tasks.forEach(t=>t.addEventListener('click',()=>{
+  tasks.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  detail.textContent=t.dataset.text;
+}));
+</script>
+</body>
+</html>
